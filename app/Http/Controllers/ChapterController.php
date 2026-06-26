@@ -19,11 +19,16 @@ class ChapterController extends Controller
         $data = $this->validated($request);
         $data['book_id'] = $book->id;
         $data['word_count'] = mb_strlen(strip_tags($data['body'] ?? ''));
+        // 並び順の指定がなければ末尾に追加する
+        if (empty($data['sort_order'])) {
+            $data['sort_order'] = ($book->chapters()->max('sort_order') ?? 0) + 1;
+        }
 
         $chapter = Chapter::create($data);
         $this->saveVersion($chapter, '初回作成');
 
-        return redirect()->route('chapters.show', $chapter);
+        return redirect()->route('chapters.show', $chapter)
+            ->with('status', '章を作成しました。');
     }
 
     public function show(Chapter $chapter)
@@ -46,14 +51,17 @@ class ChapterController extends Controller
         $chapter->update($data);
         $this->saveVersion($chapter, $request->input('version_note'));
 
-        return redirect()->route('chapters.show', $chapter);
+        return redirect()->route('chapters.show', $chapter)
+            ->with('status', '章を保存しました。保存履歴に追加されています。');
     }
 
     public function destroy(Chapter $chapter)
     {
         $book = $chapter->book;
         $chapter->delete();
-        return redirect()->route('books.show', $book);
+
+        return redirect()->route('books.show', $book)
+            ->with('status', '章を削除しました。');
     }
 
     private function validated(Request $request): array
