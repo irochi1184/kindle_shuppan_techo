@@ -13,6 +13,20 @@ class Book extends Model
         'book_goal', 'reader_benefit', 'description', 'status',
     ];
 
+    /** 出版状態の選択肢（値 => 表示ラベル） */
+    public const STATUSES = [
+        'planning' => '企画中',
+        'writing' => '執筆中',
+        'editing' => '推敲中',
+        'published' => '出版済み',
+    ];
+
+    /** 状態の日本語ラベルを返す */
+    public function statusLabel(): string
+    {
+        return self::STATUSES[$this->status] ?? $this->status ?? '未設定';
+    }
+
     public function chapters(): HasMany
     {
         return $this->hasMany(Chapter::class)->orderBy('sort_order');

@@ -32,8 +32,10 @@ class BookController extends Controller
         ]);
 
         $book = Book::create($data);
+        $this->createDefaultTasks($book);
 
-        return redirect()->route('books.show', $book);
+        return redirect()->route('books.show', $book)
+            ->with('status', '本を作成しました。さっそく章を追加してみましょう。');
     }
 
     public function show(Book $book)
@@ -62,13 +64,16 @@ class BookController extends Controller
 
         $book->update($data);
 
-        return redirect()->route('books.show', $book);
+        return redirect()->route('books.show', $book)
+            ->with('status', '本の情報を更新しました。');
     }
 
     public function destroy(Book $book)
     {
         $book->delete();
-        return redirect()->route('books.index');
+
+        return redirect()->route('books.index')
+            ->with('status', '本を削除しました。');
     }
 
     public function exportMarkdown(Book $book)
@@ -81,14 +86,43 @@ class BookController extends Controller
         }
 
         foreach ($book->chapters as $chapter) {
-            $content .= "\n# " . $chapter->title . "\n\n";
-            $content .= $chapter->body . "\n";
+            // 本のタイトルが見出し1なので、章は見出し2にして階層を保つ
+            $content .= "\n## " . $chapter->title . "\n\n";
+            $content .= ($chapter->body ?? '') . "\n";
         }
 
-        $filename = Str::slug($book->title) . '.md';
+        // 日本語タイトルだと Str::slug が空になることがあるためフォールバックを用意
+        $slug = Str::slug($book->title);
+        $filename = ($slug !== '' ? $slug : 'book-' . $book->id) . '.md';
 
         return response($content)
             ->header('Content-Type', 'text/markdown; charset=UTF-8')
             ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+    }
+
+    /** 出版前チェックリストの初期項目を作成する */
+    private function createDefaultTasks(Book $book): void
+    {
+        $titles = [
+            'KDPアカウントを作成した',
+            '著者名を決めた',
+            '書籍タイトルを決めた',
+            '表紙を準備した',
+            '原稿を通読した',
+            '誤字脱字を確認した',
+            '説明文を作成した',
+            'キーワードを7つ以内で決めた',
+            'カテゴリ候補を決めた',
+            '価格を決めた',
+            'Kindle Previewerで表示確認した',
+        ];
+
+        foreach ($titles as $i => $title) {
+            $book->publishingTasks()->create([
+                'title' => $title,
+                'is_done' => false,
+                'sort_order' => $i + 1,
+            ]);
+        }
     }
 }
