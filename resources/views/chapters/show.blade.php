@@ -4,7 +4,9 @@
 
 @section('content')
     <div class="mb-6">
-        <a href="{{ route('books.show', $chapter->book) }}" class="text-sm text-stone-500 hover:text-amber-700">← {{ $chapter->book->title }} に戻る</a>
+        <a href="{{ route('books.show', $chapter->book) }}" class="inline-flex items-center gap-1 text-sm text-stone-500 hover:text-amber-700">
+            <x-icon name="arrow-left" class="w-4 h-4" />{{ $chapter->book->title }} に戻る
+        </a>
     </div>
 
     {{-- 章ヘッダー --}}
@@ -18,7 +20,8 @@
                 <h1 class="text-2xl font-bold mt-2">{{ $chapter->title }}</h1>
             </div>
             <a href="{{ route('chapters.edit', $chapter) }}"
-               class="shrink-0 rounded-lg bg-amber-600 px-4 py-2 text-sm text-white font-medium hover:bg-amber-700">原稿を書く・編集する</a>
+               class="inline-flex items-center gap-1.5 shrink-0 rounded-lg bg-amber-600 px-4 py-2 text-sm text-white font-medium hover:bg-amber-700">
+                <x-icon name="pencil" class="w-4 h-4" />原稿を書く・編集する</a>
         </div>
 
         @if ($chapter->summary)

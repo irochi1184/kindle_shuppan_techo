@@ -11,7 +11,9 @@
 
 @section('content')
     <div class="mb-6">
-        <a href="{{ route('books.index') }}" class="text-sm text-stone-500 hover:text-amber-700">← 本の一覧に戻る</a>
+        <a href="{{ route('books.index') }}" class="inline-flex items-center gap-1 text-sm text-stone-500 hover:text-amber-700">
+            <x-icon name="arrow-left" class="w-4 h-4" />本の一覧に戻る
+        </a>
     </div>
 
     {{-- 本のヘッダー --}}
@@ -29,9 +31,11 @@
             </div>
             <div class="flex flex-col gap-2 shrink-0">
                 <a href="{{ route('books.edit', $book) }}"
-                   class="rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium text-center hover:bg-stone-50">本の情報を編集</a>
+                   class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium hover:bg-stone-50">
+                    <x-icon name="pencil" class="w-4 h-4" />本の情報を編集</a>
                 <a href="{{ route('books.export.markdown', $book) }}"
-                   class="rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium text-center hover:bg-stone-50">原稿をMarkdownで書き出す</a>
+                   class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium hover:bg-stone-50">
+                    <x-icon name="download" class="w-4 h-4" />原稿をMarkdownで書き出す</a>
             </div>
         </div>
 
@@ -55,7 +59,8 @@
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg font-bold">章（原稿）</h2>
             <a href="{{ route('books.chapters.create', $book) }}"
-               class="rounded-lg bg-amber-600 px-3 py-1.5 text-white text-sm font-medium hover:bg-amber-700">＋ 章を追加</a>
+               class="inline-flex items-center gap-1.5 rounded-lg bg-amber-600 px-3.5 py-1.5 text-white text-sm font-medium hover:bg-amber-700">
+                <x-icon name="plus" class="w-4 h-4" />章を追加</a>
         </div>
 
         @forelse ($book->chapters as $chapter)
@@ -89,8 +94,10 @@
                         @csrf
                         @method('PATCH')
                         <button type="submit" class="w-full flex items-center gap-3 rounded-lg px-2 py-2 text-left hover:bg-stone-50">
-                            <span class="shrink-0 w-5 h-5 rounded border flex items-center justify-center text-xs
-                                {{ $task->is_done ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-stone-300 text-transparent' }}">✓</span>
+                            <span class="shrink-0 w-5 h-5 rounded-md border flex items-center justify-center transition
+                                {{ $task->is_done ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-stone-300 text-transparent' }}">
+                                <x-icon name="check" class="w-3.5 h-3.5" />
+                            </span>
                             <span class="text-sm {{ $task->is_done ? 'text-stone-400 line-through' : 'text-stone-700' }}">{{ $task->title }}</span>
                         </button>
                     </form>

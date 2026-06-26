@@ -15,15 +15,18 @@
 <body class="min-h-screen bg-stone-50 text-stone-800">
     <header class="bg-white border-b border-stone-200">
         <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-            <a href="{{ route('books.index') }}" class="flex items-center gap-2 text-lg font-bold text-stone-800">
-                <span class="text-2xl">📖</span>
+            <a href="{{ route('books.index') }}" class="flex items-center gap-2.5 text-lg font-bold tracking-tight text-stone-800">
+                <span class="flex items-center justify-center w-9 h-9 rounded-lg bg-stone-900 text-amber-50">
+                    <x-icon name="book-open" class="w-5 h-5" />
+                </span>
                 <span>Kindle出版手帳</span>
             </a>
             <nav class="flex items-center gap-4 text-sm">
                 <a href="{{ route('books.index') }}" class="text-stone-600 hover:text-amber-700">本の一覧</a>
                 <a href="{{ route('books.create') }}"
-                   class="inline-flex items-center gap-1 rounded-lg bg-amber-600 px-3 py-1.5 text-white font-medium hover:bg-amber-700">
-                    ＋ 新しい本
+                   class="inline-flex items-center gap-1.5 rounded-lg bg-amber-600 px-3.5 py-1.5 text-white font-medium hover:bg-amber-700">
+                    <x-icon name="plus" class="w-4 h-4" />
+                    新しい本
                 </a>
             </nav>
         </div>

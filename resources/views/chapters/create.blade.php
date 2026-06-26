@@ -4,7 +4,9 @@
 
 @section('content')
     <div class="mb-6">
-        <a href="{{ route('books.show', $book) }}" class="text-sm text-stone-500 hover:text-amber-700">← {{ $book->title }} に戻る</a>
+        <a href="{{ route('books.show', $book) }}" class="inline-flex items-center gap-1 text-sm text-stone-500 hover:text-amber-700">
+            <x-icon name="arrow-left" class="w-4 h-4" />{{ $book->title }} に戻る
+        </a>
         <h1 class="text-2xl font-bold mt-2">章を追加</h1>
     </div>
 

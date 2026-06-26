@@ -9,8 +9,9 @@
             <p class="text-sm text-stone-500 mt-1">執筆中・出版準備中の本を管理します。</p>
         </div>
         <a href="{{ route('books.create') }}"
-           class="inline-flex items-center gap-1 rounded-lg bg-amber-600 px-4 py-2 text-white font-medium hover:bg-amber-700">
-            ＋ 新しい本をつくる
+           class="inline-flex items-center gap-1.5 rounded-lg bg-amber-600 px-4 py-2 text-white font-medium hover:bg-amber-700">
+            <x-icon name="plus" class="w-4 h-4" />
+            新しい本をつくる
         </a>
     </div>
 
@@ -34,12 +35,15 @@
             </div>
         </a>
     @empty
-        <div class="bg-white rounded-xl border border-dashed border-stone-300 p-10 text-center">
-            <p class="text-4xl mb-3">📚</p>
-            <p class="text-stone-600 mb-4">まだ本がありません。最初の1冊をつくってみましょう。</p>
+        <div class="bg-white rounded-xl border border-dashed border-stone-300 p-12 text-center">
+            <span class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-stone-100 text-stone-400 mb-4">
+                <x-icon name="books" class="w-7 h-7" />
+            </span>
+            <p class="text-stone-600 mb-5">まだ本がありません。最初の1冊をつくってみましょう。</p>
             <a href="{{ route('books.create') }}"
-               class="inline-flex items-center gap-1 rounded-lg bg-amber-600 px-4 py-2 text-white font-medium hover:bg-amber-700">
-                ＋ 新しい本をつくる
+               class="inline-flex items-center gap-1.5 rounded-lg bg-amber-600 px-4 py-2 text-white font-medium hover:bg-amber-700">
+                <x-icon name="plus" class="w-4 h-4" />
+                新しい本をつくる
             </a>
         </div>
     @endforelse

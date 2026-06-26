@@ -4,7 +4,9 @@
 
 @section('content')
     <div class="mb-6">
-        <a href="{{ route('books.index') }}" class="text-sm text-stone-500 hover:text-amber-700">← 本の一覧に戻る</a>
+        <a href="{{ route('books.index') }}" class="inline-flex items-center gap-1 text-sm text-stone-500 hover:text-amber-700">
+            <x-icon name="arrow-left" class="w-4 h-4" />本の一覧に戻る
+        </a>
         <h1 class="text-2xl font-bold mt-2">新しい本をつくる</h1>
         <p class="text-sm text-stone-500 mt-1">タイトルだけでも始められます。あとからいつでも編集できます。</p>
     </div>
