@@ -21,10 +21,24 @@ class Book extends Model
         'published' => '出版済み',
     ];
 
+    /** 状態ごとのバッジ配色（Tailwindクラス） */
+    public const STATUS_COLORS = [
+        'planning' => 'bg-sky-50 text-sky-700 ring-sky-600/15',
+        'writing' => 'bg-amber-50 text-amber-700 ring-amber-600/15',
+        'editing' => 'bg-violet-50 text-violet-700 ring-violet-600/15',
+        'published' => 'bg-emerald-50 text-emerald-700 ring-emerald-600/15',
+    ];
+
     /** 状態の日本語ラベルを返す */
     public function statusLabel(): string
     {
         return self::STATUSES[$this->status] ?? $this->status ?? '未設定';
+    }
+
+    /** 状態バッジの配色クラスを返す */
+    public function statusColor(): string
+    {
+        return self::STATUS_COLORS[$this->status] ?? 'bg-stone-100 text-stone-600 ring-stone-500/15';
     }
 
     public function chapters(): HasMany
