@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class Book extends Model
 {
@@ -14,7 +15,7 @@ class Book extends Model
 
     protected $fillable = [
         'user_id', 'title', 'subtitle', 'author_name', 'target_reader',
-        'book_goal', 'reader_benefit', 'description', 'status',
+        'book_goal', 'reader_benefit', 'description', 'status', 'cover_path',
     ];
 
     /** 出版状態の選択肢（値 => 表示ラベル） */
@@ -48,6 +49,16 @@ class Book extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /** 表紙画像の公開URL（未設定なら null）。配信ホストに依存しないルート相対パスで返す */
+    public function coverUrl(): ?string
+    {
+        if (! $this->cover_path) {
+            return null;
+        }
+
+        return parse_url(Storage::disk('public')->url($this->cover_path), PHP_URL_PATH);
     }
 
     public function chapters(): HasMany

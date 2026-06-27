@@ -31,8 +31,12 @@ Route::middleware('auth')->group(function () {
     Route::patch('chapters/{chapter}/autosave', [ChapterController::class, 'autosave'])->name('chapters.autosave');
     Route::post('chapters/{chapter}/versions/{version}/restore', [ChapterController::class, 'restoreVersion'])->name('chapters.versions.restore');
 
-    // Markdown（原稿）の書き出し
+    // 原稿の書き出し（Markdown / EPUB）
     Route::get('books/{book}/export/markdown', [BookController::class, 'exportMarkdown'])->name('books.export.markdown');
+    Route::get('books/{book}/export/epub', [BookController::class, 'exportEpub'])->name('books.export.epub');
+
+    // KDP登録シート
+    Route::get('books/{book}/kdp-sheet', [BookController::class, 'kdpSheet'])->name('books.kdp-sheet');
 
     // 出版情報（KDP）の保存
     Route::put('books/{book}/metadata', [KdpMetadataController::class, 'update'])->name('books.metadata.update');

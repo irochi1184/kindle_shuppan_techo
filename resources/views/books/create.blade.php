@@ -11,7 +11,7 @@
         <p class="text-sm text-stone-500 mt-1.5">タイトルだけでも始められます。あとからいつでも編集できます。</p>
     </div>
 
-    <form action="{{ route('books.store') }}" method="POST"
+    <form action="{{ route('books.store') }}" method="POST" enctype="multipart/form-data"
           class="bg-white rounded-2xl border border-stone-200/80 shadow-card p-6 sm:p-7">
         @csrf
         @include('books._form')

@@ -50,13 +50,20 @@
         @endif
         <a href="{{ route('books.show', $book) }}"
            class="group flex flex-col bg-white rounded-2xl border border-stone-200/80 p-5 shadow-card hover:shadow-lift hover:border-brand-200 hover:-translate-y-0.5 transition duration-200">
-            <div class="flex items-start justify-between gap-3">
-                <h2 class="text-base font-semibold text-stone-900 leading-snug group-hover:text-brand-700 transition">{{ $book->title }}</h2>
-                <x-badge :color="$book->statusColor()" class="shrink-0">{{ $book->statusLabel() }}</x-badge>
+            <div class="flex items-start gap-4">
+                @if ($book->coverUrl())
+                    <img src="{{ $book->coverUrl() }}" alt="" class="w-14 h-20 shrink-0 rounded-md object-cover border border-stone-200 shadow-sm">
+                @endif
+                <div class="min-w-0 flex-1">
+                    <div class="flex items-start justify-between gap-3">
+                        <h2 class="text-base font-semibold text-stone-900 leading-snug group-hover:text-brand-700 transition">{{ $book->title }}</h2>
+                        <x-badge :color="$book->statusColor()" class="shrink-0">{{ $book->statusLabel() }}</x-badge>
+                    </div>
+                    @if ($book->subtitle)
+                        <p class="text-sm text-stone-500 mt-1 line-clamp-2">{{ $book->subtitle }}</p>
+                    @endif
+                </div>
             </div>
-            @if ($book->subtitle)
-                <p class="text-sm text-stone-500 mt-1 line-clamp-1">{{ $book->subtitle }}</p>
-            @endif
             <div class="flex items-center gap-3 mt-4 pt-4 border-t border-stone-100 text-xs text-stone-500">
                 @if ($book->author_name)
                     <span class="truncate">著者：{{ $book->author_name }}</span>

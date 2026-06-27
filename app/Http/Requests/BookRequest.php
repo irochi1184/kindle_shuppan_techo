@@ -31,6 +31,9 @@ class BookRequest extends FormRequest
             'description' => ['nullable', 'string'],
             // 状態は定義済みの値のみ許可する
             'status' => ['nullable', Rule::in(array_keys(Book::STATUSES))],
+            // 表紙画像（任意）。JPEG/PNG、5MBまで
+            'cover' => ['nullable', 'image', 'mimes:jpeg,jpg,png', 'max:5120'],
+            'remove_cover' => ['nullable', 'boolean'],
         ];
     }
 
