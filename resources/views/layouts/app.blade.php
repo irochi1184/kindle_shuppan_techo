@@ -54,15 +54,53 @@
                 <span class="text-[15px] font-bold tracking-tight text-stone-900">Kindle出版手帳</span>
             </a>
             <nav class="flex items-center gap-1 sm:gap-2 text-sm">
-                <a href="{{ route('books.index') }}"
-                   class="hidden sm:inline-flex items-center rounded-lg px-3 py-2 font-medium text-stone-600 hover:bg-stone-100 hover:text-stone-900 transition">
-                    本の一覧
-                </a>
-                <a href="{{ route('books.create') }}"
-                   class="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 font-medium text-white shadow-sm hover:bg-brand-700 active:scale-[0.98] transition">
-                    <x-icon name="plus" class="w-4 h-4" />
-                    新しい本
-                </a>
+                @auth
+                    <a href="{{ route('books.index') }}"
+                       class="hidden sm:inline-flex items-center rounded-lg px-3 py-2 font-medium text-stone-600 hover:bg-stone-100 hover:text-stone-900 transition">
+                        本の一覧
+                    </a>
+                    <a href="{{ route('books.create') }}"
+                       class="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 font-medium text-white shadow-sm hover:bg-brand-700 active:scale-[0.98] transition">
+                        <x-icon name="plus" class="w-4 h-4" />
+                        新しい本
+                    </a>
+
+                    {{-- アカウントメニュー（JS不要の details ドロップダウン） --}}
+                    <details class="relative group ml-1">
+                        <summary class="list-none flex items-center gap-1.5 cursor-pointer rounded-lg px-2 py-1.5 hover:bg-stone-100 transition">
+                            <span class="flex items-center justify-center w-8 h-8 rounded-full bg-stone-900 text-white text-xs font-semibold">
+                                {{ mb_substr(auth()->user()->name, 0, 1) }}
+                            </span>
+                        </summary>
+                        <div class="absolute right-0 mt-2 w-52 rounded-xl border border-stone-200 bg-white p-1.5 shadow-lift z-40">
+                            <div class="px-3 py-2 border-b border-stone-100 mb-1">
+                                <p class="text-sm font-semibold text-stone-900 truncate">{{ auth()->user()->name }}</p>
+                                <p class="text-xs text-stone-400 truncate">{{ auth()->user()->email }}</p>
+                            </div>
+                            <a href="{{ route('profile.edit') }}" class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-stone-700 hover:bg-stone-50 transition">
+                                <x-icon name="user" class="w-4 h-4 text-stone-400" />アカウント設定
+                            </a>
+                            <a href="{{ route('books.trash') }}" class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-stone-700 hover:bg-stone-50 transition">
+                                <x-icon name="trash" class="w-4 h-4 text-stone-400" />ゴミ箱
+                            </a>
+                            <form action="{{ route('logout') }}" method="POST" class="border-t border-stone-100 mt-1 pt-1">
+                                @csrf
+                                <button type="submit" class="w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-stone-700 hover:bg-stone-50 transition">
+                                    <x-icon name="logout" class="w-4 h-4 text-stone-400" />ログアウト
+                                </button>
+                            </form>
+                        </div>
+                    </details>
+                @else
+                    <a href="{{ route('login') }}"
+                       class="inline-flex items-center rounded-lg px-3 py-2 font-medium text-stone-600 hover:bg-stone-100 hover:text-stone-900 transition">
+                        ログイン
+                    </a>
+                    <a href="{{ route('register') }}"
+                       class="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 font-medium text-white shadow-sm hover:bg-brand-700 active:scale-[0.98] transition">
+                        新規登録
+                    </a>
+                @endauth
             </nav>
         </div>
     </header>

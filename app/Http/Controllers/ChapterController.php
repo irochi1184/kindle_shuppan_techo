@@ -11,11 +11,13 @@ class ChapterController extends Controller
 {
     public function create(Book $book)
     {
+        $this->authorize('update', $book);
         return view('chapters.create', compact('book'));
     }
 
     public function store(Request $request, Book $book)
     {
+        $this->authorize('update', $book);
         $data = $this->validated($request);
         $data['book_id'] = $book->id;
         $data['word_count'] = mb_strlen(strip_tags($data['body'] ?? ''));
@@ -33,18 +35,21 @@ class ChapterController extends Controller
 
     public function show(Chapter $chapter)
     {
+        $this->authorize('view', $chapter->book);
         $chapter->load(['book', 'versions']);
         return view('chapters.show', compact('chapter'));
     }
 
     public function edit(Chapter $chapter)
     {
+        $this->authorize('update', $chapter->book);
         $chapter->load('book');
         return view('chapters.edit', compact('chapter'));
     }
 
     public function update(Request $request, Chapter $chapter)
     {
+        $this->authorize('update', $chapter->book);
         $data = $this->validated($request);
         $data['word_count'] = mb_strlen(strip_tags($data['body'] ?? ''));
 
@@ -57,6 +62,7 @@ class ChapterController extends Controller
 
     public function destroy(Chapter $chapter)
     {
+        $this->authorize('update', $chapter->book);
         $book = $chapter->book;
         $chapter->delete();
 

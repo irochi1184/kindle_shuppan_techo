@@ -2,18 +2,17 @@
 
 namespace Tests\Feature;
 
-// use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
 {
     /**
-     * A basic test example.
+     * 未ログインのトップアクセスはログイン画面へ誘導される。
      */
-    public function test_the_application_returns_a_successful_response(): void
+    public function test_guest_is_redirected_to_login(): void
     {
-        $response = $this->get('/');
-
-        $response->assertStatus(200);
+        // / は本の一覧へ転送され、本の一覧は auth ミドルウェアでログインへ転送される
+        $this->get('/')->assertRedirect(route('books.index'));
+        $this->get(route('books.index'))->assertRedirect(route('login'));
     }
 }

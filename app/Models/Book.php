@@ -3,13 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Book extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
-        'title', 'subtitle', 'author_name', 'target_reader',
+        'user_id', 'title', 'subtitle', 'author_name', 'target_reader',
         'book_goal', 'reader_benefit', 'description', 'status',
     ];
 
@@ -39,6 +43,11 @@ class Book extends Model
     public function statusColor(): string
     {
         return self::STATUS_COLORS[$this->status] ?? 'bg-stone-100 text-stone-600 ring-stone-500/15';
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function chapters(): HasMany

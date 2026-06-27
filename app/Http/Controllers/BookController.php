@@ -8,9 +8,15 @@ use Illuminate\Support\Str;
 
 class BookController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('books.index', ['books' => Book::latest()->get()]);
+        // ログインユーザー自身の本だけを表示
+        $books = $request->user()->books()
+            ->withCount('chapters')
+            ->latest()
+            ->get();
+
+        return view('books.index', ['books' => $books]);
     }
 
     public function create()
@@ -31,6 +37,7 @@ class BookController extends Controller
             'status' => ['nullable', 'string', 'max:50'],
         ]);
 
+        $data['user_id'] = $request->user()->id;
         $book = Book::create($data);
         $this->createDefaultTasks($book);
 
@@ -40,17 +47,20 @@ class BookController extends Controller
 
     public function show(Book $book)
     {
+        $this->authorize('view', $book);
         $book->load(['chapters', 'publishingTasks', 'kdpMetadata']);
         return view('books.show', compact('book'));
     }
 
     public function edit(Book $book)
     {
+        $this->authorize('update', $book);
         return view('books.edit', compact('book'));
     }
 
     public function update(Request $request, Book $book)
     {
+        $this->authorize('update', $book);
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'subtitle' => ['nullable', 'string', 'max:255'],
@@ -70,14 +80,50 @@ class BookController extends Controller
 
     public function destroy(Book $book)
     {
+        $this->authorize('delete', $book);
         $book->delete();
 
         return redirect()->route('books.index')
-            ->with('status', '本を削除しました。');
+            ->with('status', '本をゴミ箱に移動しました。30日以内ならゴミ箱から戻せます。');
+    }
+
+    /** ゴミ箱：論理削除した本の一覧 */
+    public function trash(Request $request)
+    {
+        $books = $request->user()->books()
+            ->onlyTrashed()
+            ->withCount('chapters')
+            ->latest('deleted_at')
+            ->get();
+
+        return view('books.trash', ['books' => $books]);
+    }
+
+    /** ゴミ箱から本を復元する */
+    public function restore(Request $request, int $id)
+    {
+        $book = $request->user()->books()->onlyTrashed()->findOrFail($id);
+        $this->authorize('restore', $book);
+        $book->restore();
+
+        return redirect()->route('books.show', $book)
+            ->with('status', '本を復元しました。');
+    }
+
+    /** ゴミ箱から本を完全に削除する（取り消し不可） */
+    public function forceDelete(Request $request, int $id)
+    {
+        $book = $request->user()->books()->onlyTrashed()->findOrFail($id);
+        $this->authorize('forceDelete', $book);
+        $book->forceDelete();
+
+        return redirect()->route('books.trash')
+            ->with('status', '本を完全に削除しました。');
     }
 
     public function exportMarkdown(Book $book)
     {
+        $this->authorize('view', $book);
         $book->load('chapters');
 
         $content = '# ' . $book->title . "\n\n";
