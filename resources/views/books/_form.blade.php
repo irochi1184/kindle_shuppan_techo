@@ -54,4 +54,28 @@
             @endforeach
         </select>
     </div>
+
+    <div>
+        <label class="block text-sm font-medium text-stone-700 mb-1.5">表紙画像</label>
+        <div class="flex items-start gap-4">
+            @if (($book->coverUrl() ?? null))
+                <img src="{{ $book->coverUrl() }}" alt="現在の表紙" class="w-20 h-28 rounded-lg object-cover border border-stone-200 shadow-sm">
+            @else
+                <div class="w-20 h-28 rounded-lg border border-dashed border-stone-300 flex items-center justify-center text-stone-300">
+                    <x-icon name="document" class="w-6 h-6" />
+                </div>
+            @endif
+            <div class="flex-1">
+                <input type="file" name="cover" accept="image/png,image/jpeg"
+                       class="block w-full text-sm text-stone-600 file:mr-3 file:rounded-lg file:border-0 file:bg-stone-100 file:px-3 file:py-2 file:text-sm file:font-medium file:text-stone-700 hover:file:bg-stone-200 cursor-pointer">
+                <p class="text-xs text-stone-400 mt-1.5">JPEG または PNG・5MBまで。縦長（おすすめ 1600×2560px）。</p>
+                @if (($book->cover_path ?? null))
+                    <label class="inline-flex items-center gap-2 mt-2 text-sm text-stone-600">
+                        <input type="checkbox" name="remove_cover" value="1" class="rounded border-stone-300 text-red-600 focus:ring-red-500/30">
+                        現在の表紙を削除する
+                    </label>
+                @endif
+            </div>
+        </div>
+    </div>
 </div>

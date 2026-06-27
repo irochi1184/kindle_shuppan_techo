@@ -21,24 +21,37 @@
     {{-- 本のヘッダー --}}
     <div class="bg-white rounded-2xl border border-stone-200/80 shadow-card p-6 sm:p-7 mb-6">
         <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-5">
-            <div class="min-w-0">
-                <x-badge :color="$book->statusColor()">{{ $book->statusLabel() }}</x-badge>
-                <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-stone-900 mt-3">{{ $book->title }}</h1>
-                @if ($book->subtitle)
-                    <p class="text-stone-500 mt-1.5">{{ $book->subtitle }}</p>
+            <div class="flex items-start gap-5 min-w-0">
+                @if ($book->coverUrl())
+                    <img src="{{ $book->coverUrl() }}" alt="表紙" class="w-24 h-36 shrink-0 rounded-lg object-cover border border-stone-200 shadow-sm">
                 @endif
-                @if ($book->author_name)
-                    <p class="text-sm text-stone-400 mt-2.5">著者：{{ $book->author_name }}</p>
-                @endif
+                <div class="min-w-0">
+                    <x-badge :color="$book->statusColor()">{{ $book->statusLabel() }}</x-badge>
+                    <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-stone-900 mt-3">{{ $book->title }}</h1>
+                    @if ($book->subtitle)
+                        <p class="text-stone-500 mt-1.5">{{ $book->subtitle }}</p>
+                    @endif
+                    @if ($book->author_name)
+                        <p class="text-sm text-stone-400 mt-2.5">著者：{{ $book->author_name }}</p>
+                    @endif
+                </div>
             </div>
-            <div class="flex flex-row sm:flex-col gap-2 shrink-0">
+            <div class="grid grid-cols-2 sm:grid-cols-1 gap-2 shrink-0">
                 <a href="{{ route('books.edit', $book) }}"
-                   class="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 hover:bg-stone-50 transition">
+                   class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 hover:bg-stone-50 transition">
                     <x-icon name="pencil" class="w-4 h-4" />編集
                 </a>
+                <a href="{{ route('books.kdp-sheet', $book) }}"
+                   class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 hover:bg-stone-50 transition">
+                    <x-icon name="document" class="w-4 h-4" />KDP登録シート
+                </a>
+                <a href="{{ route('books.export.epub', $book) }}"
+                   class="inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-brand-700 active:scale-[0.98] transition">
+                    <x-icon name="download" class="w-4 h-4" />EPUBで書き出す
+                </a>
                 <a href="{{ route('books.export.markdown', $book) }}"
-                   class="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 hover:bg-stone-50 transition">
-                    <x-icon name="download" class="w-4 h-4" />書き出す
+                   class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 hover:bg-stone-50 transition">
+                    <x-icon name="download" class="w-4 h-4" />Markdown
                 </a>
             </div>
         </div>

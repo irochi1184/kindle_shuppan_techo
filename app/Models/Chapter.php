@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\MarkdownRenderer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -43,6 +44,12 @@ class Chapter extends Model
     public function statusColor(): string
     {
         return self::STATUS_COLORS[$this->status] ?? 'bg-stone-100 text-stone-600 ring-stone-500/15';
+    }
+
+    /** 原稿（Markdown）を HTML に変換して返す */
+    public function bodyHtml(): string
+    {
+        return app(MarkdownRenderer::class)->toHtml($this->body);
     }
 
     public function book(): BelongsTo

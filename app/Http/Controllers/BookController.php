@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\BookRequest;
 use App\Models\Book;
 use App\Models\ChapterVersion;
+use App\Services\EpubBuilder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class BookController extends Controller
@@ -69,10 +71,11 @@ class BookController extends Controller
 
     public function store(BookRequest $request)
     {
-        $data = $request->validated();
+        $data = $request->safe()->except(['cover', 'remove_cover']);
         $data['user_id'] = $request->user()->id;
         $book = Book::create($data);
         $this->createDefaultTasks($book);
+        $this->applyCover($book, $request);
 
         return redirect()->route('books.show', $book)
             ->with('status', '本を作成しました。さっそく章を追加してみましょう。');
@@ -94,10 +97,27 @@ class BookController extends Controller
     public function update(BookRequest $request, Book $book)
     {
         $this->authorize('update', $book);
-        $book->update($request->validated());
+        $book->update($request->safe()->except(['cover', 'remove_cover']));
+        $this->applyCover($book, $request);
 
         return redirect()->route('books.show', $book)
             ->with('status', '本の情報を更新しました。');
+    }
+
+    /** 表紙画像のアップロード／削除を反映する */
+    private function applyCover(Book $book, BookRequest $request): void
+    {
+        // 「表紙を削除」または新しい画像のアップロード時は、既存ファイルを片付ける
+        if (($request->boolean('remove_cover') || $request->hasFile('cover')) && $book->cover_path) {
+            Storage::disk('public')->delete($book->cover_path);
+            $book->cover_path = null;
+        }
+
+        if ($request->hasFile('cover')) {
+            $book->cover_path = $request->file('cover')->store("covers/{$book->id}", 'public');
+        }
+
+        $book->save();
     }
 
     public function destroy(Book $book)
@@ -137,6 +157,8 @@ class BookController extends Controller
     {
         $book = $request->user()->books()->onlyTrashed()->findOrFail($id);
         $this->authorize('forceDelete', $book);
+        // 表紙画像も片付ける
+        Storage::disk('public')->deleteDirectory("covers/{$book->id}");
         $book->forceDelete();
 
         return redirect()->route('books.trash')
@@ -166,6 +188,27 @@ class BookController extends Controller
         return response($content)
             ->header('Content-Type', 'text/markdown; charset=UTF-8')
             ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+    }
+
+    /** EPUB を生成してダウンロードさせる（#16） */
+    public function exportEpub(Book $book, EpubBuilder $epub)
+    {
+        $this->authorize('view', $book);
+
+        $path = $epub->build($book);
+
+        return response()->download($path, $epub->filename($book), [
+            'Content-Type' => 'application/epub+zip',
+        ])->deleteFileAfterSend(true);
+    }
+
+    /** KDP登録シート（コピペ用・文字数カウンタ付き）（#18） */
+    public function kdpSheet(Book $book)
+    {
+        $this->authorize('view', $book);
+        $book->load('kdpMetadata');
+
+        return view('books.kdp-sheet', compact('book'));
     }
 
     /** 出版前チェックリストの初期項目を作成する */

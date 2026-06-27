@@ -10,7 +10,7 @@
         <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-stone-900 mt-3">本の情報を編集</h1>
     </div>
 
-    <form action="{{ route('books.update', $book) }}" method="POST"
+    <form action="{{ route('books.update', $book) }}" method="POST" enctype="multipart/form-data"
           class="bg-white rounded-2xl border border-stone-200/80 shadow-card p-6 sm:p-7">
         @csrf
         @method('PUT')

@@ -36,7 +36,7 @@
     <section class="bg-white rounded-2xl border border-stone-200/80 shadow-card p-6 sm:p-7 mb-6">
         <h2 class="text-base font-semibold text-stone-900 mb-4">原稿</h2>
         @if (filled($chapter->body))
-            <div class="rounded-xl bg-stone-50/70 border border-stone-100 px-5 py-4 text-[15px] leading-loose whitespace-pre-wrap text-stone-700">{{ $chapter->body }}</div>
+            <div class="prose-editor rounded-xl bg-stone-50/70 border border-stone-100 px-5 py-4 text-[15px] leading-loose text-stone-700">{!! $chapter->bodyHtml() !!}</div>
         @else
             <div class="rounded-xl border border-dashed border-stone-200 py-10 text-center">
                 <p class="text-sm text-stone-500">まだ本文がありません。「原稿を書く・編集する」から書き始めましょう。</p>
