@@ -52,6 +52,7 @@ class Chapter extends Model
 
     public function versions(): HasMany
     {
-        return $this->hasMany(ChapterVersion::class)->latest();
+        // 新しい順。同一秒の保存でも順序が安定するよう id でもタイブレークする
+        return $this->hasMany(ChapterVersion::class)->latest()->latest('id');
     }
 }

@@ -84,19 +84,30 @@
             </a>
         </div>
 
-        <div class="space-y-2">
+        @if ($book->chapters->isNotEmpty())
+            <div class="flex items-center justify-between mb-2 px-1">
+                <p class="text-xs text-stone-400">ハンドルをドラッグして並べ替えられます。</p>
+                <span data-reorder-status class="text-xs text-stone-400"></span>
+            </div>
+        @endif
+
+        <div class="space-y-2" data-sortable-chapters data-reorder-url="{{ route('books.chapters.reorder', $book) }}">
             @forelse ($book->chapters as $chapter)
-                <a href="{{ route('chapters.show', $chapter) }}"
-                   class="group flex items-center justify-between gap-4 rounded-xl border border-stone-100 px-4 py-3 hover:border-brand-200 hover:bg-brand-50/40 transition">
-                    <div class="flex items-center gap-3 min-w-0">
-                        <span class="shrink-0 w-7 h-7 rounded-lg bg-stone-100 text-stone-500 text-xs font-semibold flex items-center justify-center group-hover:bg-brand-100 group-hover:text-brand-700 transition">{{ $chapter->sort_order }}</span>
-                        <span class="font-medium text-stone-800 truncate group-hover:text-brand-800 transition">{{ $chapter->title }}</span>
+                <div data-chapter-id="{{ $chapter->id }}"
+                     class="group flex items-center justify-between gap-3 rounded-xl border border-stone-100 px-3 py-3 hover:border-brand-200 hover:bg-brand-50/40 transition">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <button type="button" data-drag-handle aria-label="ドラッグして並べ替え"
+                                class="shrink-0 cursor-grab active:cursor-grabbing text-stone-300 hover:text-stone-500 transition touch-none">
+                            <x-icon name="grip" class="w-5 h-5" />
+                        </button>
+                        <span data-chapter-order class="shrink-0 w-7 h-7 rounded-lg bg-stone-100 text-stone-500 text-xs font-semibold flex items-center justify-center group-hover:bg-brand-100 group-hover:text-brand-700 transition">{{ $loop->iteration }}</span>
+                        <a href="{{ route('chapters.show', $chapter) }}" class="font-medium text-stone-800 truncate hover:text-brand-800 transition">{{ $chapter->title }}</a>
                     </div>
                     <div class="flex items-center gap-3 shrink-0">
                         <span class="text-xs text-stone-400 tabular-nums">{{ number_format($chapter->word_count) }} 字</span>
                         <x-badge :color="$chapter->statusColor()">{{ $chapter->statusLabel() }}</x-badge>
                     </div>
-                </a>
+                </div>
             @empty
                 <div class="rounded-xl border border-dashed border-stone-200 py-8 text-center">
                     <p class="text-sm text-stone-500">まだ章がありません。「章を追加」から書き始めましょう。</p>

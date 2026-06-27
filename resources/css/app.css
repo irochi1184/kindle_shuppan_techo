@@ -11,3 +11,26 @@
         scroll-margin-top: 5rem;
     }
 }
+
+@layer components {
+    /* Markdownライブプレビューの簡易タイポグラフィ（typographyプラグイン不使用のため自前） */
+    .prose-editor :where(h1) { @apply text-xl font-bold text-stone-900 mt-4 mb-2 first:mt-0; }
+    .prose-editor :where(h2) { @apply text-lg font-bold text-stone-900 mt-4 mb-2 first:mt-0; }
+    .prose-editor :where(h3) { @apply text-base font-semibold text-stone-900 mt-3 mb-1.5 first:mt-0; }
+    .prose-editor :where(p) { @apply my-2; }
+    .prose-editor :where(ul) { @apply list-disc pl-5 my-2 space-y-1; }
+    .prose-editor :where(ol) { @apply list-decimal pl-5 my-2 space-y-1; }
+    .prose-editor :where(blockquote) { @apply border-l-2 border-stone-300 pl-3 text-stone-500 my-2; }
+    .prose-editor :where(code) { @apply rounded bg-stone-100 px-1 py-0.5 text-[0.85em] font-mono; }
+    .prose-editor :where(pre) { @apply rounded-lg bg-stone-900 text-stone-100 p-3 my-2 overflow-auto text-xs; }
+    .prose-editor :where(pre code) { @apply bg-transparent p-0; }
+    .prose-editor :where(a) { @apply text-brand-700 underline; }
+    .prose-editor :where(strong) { @apply font-semibold text-stone-900; }
+    .prose-editor :where(hr) { @apply my-4 border-stone-200; }
+
+    /* 自動保存ステータスの色（data-tone で出し分け） */
+    [data-autosave-status][data-tone="saving"] { @apply text-brand-600; }
+    [data-autosave-status][data-tone="dirty"] { @apply text-stone-400; }
+    [data-autosave-status][data-tone="saved"] { @apply text-emerald-600; }
+    [data-autosave-status][data-tone="error"] { @apply text-red-600; }
+}

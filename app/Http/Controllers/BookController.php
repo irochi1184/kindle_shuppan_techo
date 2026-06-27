@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\BookRequest;
 use App\Models\Book;
+use App\Models\ChapterVersion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -11,13 +12,54 @@ class BookController extends Controller
 {
     public function index(Request $request)
     {
+        $user = $request->user();
+
         // ログインユーザー自身の本だけを表示
-        $books = $request->user()->books()
+        $books = $user->books()
             ->withCount('chapters')
             ->latest()
             ->get();
 
-        return view('books.index', ['books' => $books]);
+        return view('books.index', [
+            'books' => $books,
+            'activity' => $this->writingActivity($user->id),
+        ]);
+    }
+
+    /**
+     * 執筆の記録（#15）。直近14日間の「保存した日」と連続執筆日数を返す。
+     *
+     * @return array{days: array<int, array{date: \Illuminate\Support\Carbon, active: bool}>, streak: int}
+     */
+    private function writingActivity(int $userId): array
+    {
+        // 直近30日に保存された版の「日付」の集合を作る
+        $activeDates = ChapterVersion::query()
+            ->whereHas('chapter.book', fn ($q) => $q->where('user_id', $userId))
+            ->where('created_at', '>=', now()->subDays(30)->startOfDay())
+            ->pluck('created_at')
+            ->map(fn ($d) => $d->toDateString())
+            ->unique()
+            ->flip();
+
+        // 直近14日分の活動有無
+        $days = [];
+        for ($i = 13; $i >= 0; $i--) {
+            $date = now()->subDays($i)->startOfDay();
+            $days[] = ['date' => $date, 'active' => $activeDates->has($date->toDateString())];
+        }
+
+        // 連続執筆日数（今日になければ昨日を起点に数える）
+        $streak = 0;
+        $cursor = $activeDates->has(now()->toDateString())
+            ? now()->startOfDay()
+            : now()->subDay()->startOfDay();
+        while ($activeDates->has($cursor->toDateString())) {
+            $streak++;
+            $cursor = $cursor->subDay();
+        }
+
+        return ['days' => $days, 'streak' => $streak];
     }
 
     public function create()
