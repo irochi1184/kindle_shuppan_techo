@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ChapterRequest;
 use App\Models\Book;
 use App\Models\Chapter;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class ChapterController extends Controller
 {
@@ -15,10 +14,10 @@ class ChapterController extends Controller
         return view('chapters.create', compact('book'));
     }
 
-    public function store(Request $request, Book $book)
+    public function store(ChapterRequest $request, Book $book)
     {
         $this->authorize('update', $book);
-        $data = $this->validated($request);
+        $data = $request->safe()->except('version_note');
         $data['book_id'] = $book->id;
         $data['word_count'] = mb_strlen(strip_tags($data['body'] ?? ''));
         // 並び順の指定がなければ末尾に追加する
@@ -47,17 +46,19 @@ class ChapterController extends Controller
         return view('chapters.edit', compact('chapter'));
     }
 
-    public function update(Request $request, Chapter $chapter)
+    public function update(ChapterRequest $request, Chapter $chapter)
     {
         $this->authorize('update', $chapter->book);
-        $data = $this->validated($request);
+        $data = $request->safe()->except('version_note');
         $data['word_count'] = mb_strlen(strip_tags($data['body'] ?? ''));
 
         $chapter->update($data);
-        $this->saveVersion($chapter, $request->input('version_note'));
+        $saved = $this->saveVersion($chapter, $request->input('version_note'));
 
         return redirect()->route('chapters.show', $chapter)
-            ->with('status', '章を保存しました。保存履歴に追加されています。');
+            ->with('status', $saved
+                ? '章を保存しました。保存履歴に追加されています。'
+                : '章を保存しました。本文に変更がないため、保存履歴は追加していません。');
     }
 
     public function destroy(Chapter $chapter)
@@ -70,23 +71,25 @@ class ChapterController extends Controller
             ->with('status', '章を削除しました。');
     }
 
-    private function validated(Request $request): array
+    /**
+     * 保存履歴（版）を追加する。
+     * 直前の版と本文が同一なら追加しない（#9: 無変更の版で履歴が肥大化するのを防ぐ）。
+     *
+     * @return bool 版を追加したら true
+     */
+    private function saveVersion(Chapter $chapter, ?string $note): bool
     {
-        return $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'summary' => ['nullable', 'string'],
-            'body' => ['nullable', 'string'],
-            'sort_order' => ['nullable', 'integer'],
-            'status' => ['nullable', 'string', 'max:50'],
-        ]);
-    }
+        $latest = $chapter->versions()->first(); // versions() は最新順
+        if ($latest && (string) $latest->body === (string) $chapter->body) {
+            return false;
+        }
 
-    private function saveVersion(Chapter $chapter, ?string $note): void
-    {
         $chapter->versions()->create([
             'body' => $chapter->body,
             'note' => $note ?: '保存',
             'word_count' => $chapter->word_count,
         ]);
+
+        return true;
     }
 }
