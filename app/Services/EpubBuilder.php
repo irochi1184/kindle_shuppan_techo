@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Book;
 use Illuminate\Support\Facades\Storage;
-use League\CommonMark\CommonMarkConverter;
 use ZipArchive;
 
 /**
@@ -13,15 +12,8 @@ use ZipArchive;
  */
 class EpubBuilder
 {
-    private CommonMarkConverter $markdown;
-
-    public function __construct()
+    public function __construct(private MarkdownRenderer $markdown)
     {
-        // 原稿は Markdown。安全のため生 HTML は除去する
-        $this->markdown = new CommonMarkConverter([
-            'html_input' => 'strip',
-            'allow_unsafe_links' => false,
-        ]);
     }
 
     /**
@@ -132,7 +124,7 @@ class EpubBuilder
 
     private function chapterXhtml(string $title, string $markdown): string
     {
-        $html = $markdown !== '' ? $this->markdown->convert($markdown)->getContent() : '';
+        $html = $this->markdown->toHtml($markdown);
 
         return $this->wrapXhtml($title, '<h1>'.$this->e($title).'</h1>'."\n".$html);
     }
