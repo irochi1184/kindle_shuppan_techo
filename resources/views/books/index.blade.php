@@ -15,6 +15,35 @@
         </a>
     </div>
 
+    @if ($books->isNotEmpty())
+        {{-- 執筆の記録（直近14日） --}}
+        <div class="flex flex-wrap items-center justify-between gap-4 bg-white rounded-2xl border border-stone-200/80 shadow-card px-5 py-4 mb-6">
+            <div class="flex items-center gap-3">
+                <span class="flex items-center justify-center w-10 h-10 rounded-xl {{ $activity['streak'] > 0 ? 'bg-orange-50 text-orange-500' : 'bg-stone-100 text-stone-400' }}">
+                    <x-icon name="flame" class="w-5 h-5" />
+                </span>
+                <div>
+                    <p class="text-sm font-semibold text-stone-900">
+                        @if ($activity['streak'] > 0)
+                            {{ $activity['streak'] }}日連続で執筆中
+                        @else
+                            今日から書き始めましょう
+                        @endif
+                    </p>
+                    <p class="text-xs text-stone-400">保存した日を記録しています（直近14日）</p>
+                </div>
+            </div>
+            <div class="flex items-end gap-1">
+                @foreach ($activity['days'] as $day)
+                    <div class="group/day relative">
+                        <div class="w-4 h-7 rounded {{ $day['active'] ? 'bg-emerald-400' : 'bg-stone-100' }} {{ $day['date']->isToday() ? 'ring-2 ring-emerald-300 ring-offset-1' : '' }}"></div>
+                        <span class="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-stone-800 px-1.5 py-0.5 text-[10px] text-white opacity-0 group-hover/day:opacity-100 transition">{{ $day['date']->format('n/j') }}</span>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @endif
+
     @forelse ($books as $book)
         @if ($loop->first)
             <div class="grid gap-3 sm:grid-cols-2">

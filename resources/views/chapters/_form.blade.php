@@ -33,10 +33,29 @@
     </div>
 
     <div>
-        <label class="block text-sm font-medium text-stone-700 mb-1.5">原稿</label>
-        <textarea name="body" rows="18"
-                  class="w-full rounded-xl border border-stone-300 bg-stone-50/50 px-4 py-3 text-sm leading-relaxed font-mono transition focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/25 outline-none placeholder:text-stone-400"
-                  placeholder="ここに本文を書きます。">{{ old('body', $chapter->body ?? '') }}</textarea>
-        <p class="text-xs text-stone-400 mt-1">保存するたびに文字数を自動で数え、保存履歴に残します。</p>
+        <div class="flex items-end justify-between mb-1.5">
+            <label class="block text-sm font-medium text-stone-700">原稿</label>
+            <div class="flex items-center gap-3 text-xs text-stone-400">
+                <span><span data-word-count class="font-medium text-stone-600 tabular-nums">0</span> 字</span>
+                @isset($autosaveUrl)
+                    <span data-autosave-status data-tone="muted">自動保存：入力すると数秒後に保存されます</span>
+                @endisset
+            </div>
+        </div>
+
+        {{-- エディタ（左）＋ Markdownライブプレビュー（右） --}}
+        <div class="grid lg:grid-cols-2 gap-3">
+            <textarea name="body" rows="20"
+                      data-editor-body
+                      data-autosave-url="{{ $autosaveUrl ?? '' }}"
+                      class="w-full rounded-xl border border-stone-300 bg-stone-50/50 px-4 py-3 text-sm leading-relaxed font-mono transition focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/25 outline-none placeholder:text-stone-400"
+                      placeholder="ここに本文を書きます。Markdown（## 見出し、- 箇条書き など）が使えます。">{{ old('body', $chapter->body ?? '') }}</textarea>
+
+            <div class="rounded-xl border border-stone-200 bg-white px-5 py-4 overflow-auto" style="max-height: 30rem">
+                <p class="text-[11px] font-medium text-stone-400 mb-2 uppercase tracking-wide">プレビュー</p>
+                <div data-md-preview class="prose-editor text-[15px] leading-relaxed text-stone-700"></div>
+            </div>
+        </div>
+        <p class="text-xs text-stone-400 mt-1.5">Markdownで書けます。明示的に「保存」すると保存履歴（版）に残ります。</p>
     </div>
 </div>

@@ -64,6 +64,19 @@
                         <span class="shrink-0 text-xs text-stone-400 tabular-nums">{{ $version->created_at->format('Y/m/d H:i') }}</span>
                     </summary>
                     <div class="px-4 pb-4 pt-1 border-t border-stone-100 bg-stone-50/40">
+                        <div class="flex justify-end mb-2 -mt-1">
+                            @if ($loop->first)
+                                <span class="text-xs text-stone-400 px-2 py-1">最新の保存内容です</span>
+                            @else
+                                <form action="{{ route('chapters.versions.restore', [$chapter, $version]) }}" method="POST"
+                                      onsubmit="return confirm('現在の本文を、この版の内容に置き換えます。（現在の内容も履歴に残ります）よろしいですか？');">
+                                    @csrf
+                                    <button type="submit" class="inline-flex items-center gap-1.5 rounded-lg border border-stone-300 bg-white px-3 py-1.5 text-xs font-medium text-stone-700 hover:bg-stone-50 transition">
+                                        <x-icon name="restore" class="w-3.5 h-3.5" />この版に戻す
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
                         <div class="text-sm leading-relaxed whitespace-pre-wrap font-mono text-stone-600">{{ $version->body ?: '（本文なし）' }}</div>
                     </div>
                 </details>

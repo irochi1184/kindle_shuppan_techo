@@ -15,7 +15,7 @@
           class="bg-white rounded-2xl border border-stone-200/80 shadow-card p-6 sm:p-7">
         @csrf
         @method('PUT')
-        @include('chapters._form')
+        @include('chapters._form', ['autosaveUrl' => route('chapters.autosave', $chapter)])
 
         <div class="mt-5">
             <label class="block text-sm font-medium text-stone-700 mb-1.5">保存メモ（任意）</label>

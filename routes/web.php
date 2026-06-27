@@ -22,7 +22,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('books/{id}/force', [BookController::class, 'forceDelete'])->name('books.force-delete');
 
     Route::resource('books', BookController::class);
+
+    // 章の並べ替え（#14）。shallow リソースより前に定義する
+    Route::patch('books/{book}/chapters/reorder', [ChapterController::class, 'reorder'])->name('books.chapters.reorder');
     Route::resource('books.chapters', ChapterController::class)->shallow();
+
+    // 章の自動保存（#11）と保存履歴からの復元（#13）
+    Route::patch('chapters/{chapter}/autosave', [ChapterController::class, 'autosave'])->name('chapters.autosave');
+    Route::post('chapters/{chapter}/versions/{version}/restore', [ChapterController::class, 'restoreVersion'])->name('chapters.versions.restore');
 
     // Markdown（原稿）の書き出し
     Route::get('books/{book}/export/markdown', [BookController::class, 'exportMarkdown'])->name('books.export.markdown');
