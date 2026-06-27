@@ -11,6 +11,7 @@ class KdpMetadataController extends Controller
     /** 出版情報（KDP）を保存する。書籍ごとに1件を作成 or 更新 */
     public function update(Request $request, Book $book)
     {
+        $this->authorize('update', $book);
         $data = $request->validate([
             'description' => ['nullable', 'string'],
             'keywords' => ['nullable', 'string'],   // 改行区切りで入力 → 配列化

@@ -34,7 +34,7 @@
                     <span class="text-stone-300">·</span>
                 @endif
                 <span class="inline-flex items-center gap-1 shrink-0">
-                    <x-icon name="document" class="w-3.5 h-3.5 text-stone-400" />章 {{ $book->chapters->count() }} 本
+                    <x-icon name="document" class="w-3.5 h-3.5 text-stone-400" />章 {{ $book->chapters_count }} 本
                 </span>
                 <x-icon name="arrow-left" class="w-4 h-4 ml-auto rotate-180 text-stone-300 group-hover:text-brand-500 group-hover:translate-x-0.5 transition" />
             </div>
