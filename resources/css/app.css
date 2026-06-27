@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    body {
+        -webkit-font-smoothing: antialiased;
+    }
+    /* スティッキーヘッダー分のスクロール余白 */
+    [id] {
+        scroll-margin-top: 5rem;
+    }
+}

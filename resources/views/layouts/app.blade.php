@@ -6,40 +6,12 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Kindle出版手帳')</title>
 
-    {{-- 開発初期はビルド不要の Tailwind CDN を利用（後で Vite ビルドへ移行可能） --}}
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', '"Noto Sans JP"', 'system-ui', 'sans-serif'],
-                    },
-                    colors: {
-                        // ブランドアクセント（温かみのあるアンバー）
-                        brand: {
-                            50: '#fdf8f3', 100: '#faecdd', 200: '#f3d4b3',
-                            300: '#e9b483', 400: '#dd8f4f', 500: '#cf7430',
-                            600: '#b85d24', 700: '#984820', 800: '#7b3b20',
-                            900: '#65321d', 950: '#37180d',
-                        },
-                    },
-                    boxShadow: {
-                        card: '0 1px 2px 0 rgb(28 25 23 / 0.04), 0 1px 3px 0 rgb(28 25 23 / 0.06)',
-                        lift: '0 8px 24px -8px rgb(28 25 23 / 0.12), 0 2px 6px -2px rgb(28 25 23 / 0.08)',
-                    },
-                },
-            },
-        }
-    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { -webkit-font-smoothing: antialiased; }
-        /* スクロール時に下に隠れないようヘッダー分のオフセット */
-        [id] { scroll-margin-top: 5rem; }
-    </style>
+
+    {{-- Vite でビルドした Tailwind CSS（テーマは tailwind.config.js を参照） --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="h-full bg-stone-100 text-stone-800 font-sans antialiased">
     {{-- 背景のやわらかいグラデーション --}}

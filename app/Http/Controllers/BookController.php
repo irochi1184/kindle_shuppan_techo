@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BookRequest;
 use App\Models\Book;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -24,19 +25,9 @@ class BookController extends Controller
         return view('books.create');
     }
 
-    public function store(Request $request)
+    public function store(BookRequest $request)
     {
-        $data = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'subtitle' => ['nullable', 'string', 'max:255'],
-            'author_name' => ['nullable', 'string', 'max:255'],
-            'target_reader' => ['nullable', 'string'],
-            'book_goal' => ['nullable', 'string'],
-            'reader_benefit' => ['nullable', 'string'],
-            'description' => ['nullable', 'string'],
-            'status' => ['nullable', 'string', 'max:50'],
-        ]);
-
+        $data = $request->validated();
         $data['user_id'] = $request->user()->id;
         $book = Book::create($data);
         $this->createDefaultTasks($book);
@@ -58,21 +49,10 @@ class BookController extends Controller
         return view('books.edit', compact('book'));
     }
 
-    public function update(Request $request, Book $book)
+    public function update(BookRequest $request, Book $book)
     {
         $this->authorize('update', $book);
-        $data = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'subtitle' => ['nullable', 'string', 'max:255'],
-            'author_name' => ['nullable', 'string', 'max:255'],
-            'target_reader' => ['nullable', 'string'],
-            'book_goal' => ['nullable', 'string'],
-            'reader_benefit' => ['nullable', 'string'],
-            'description' => ['nullable', 'string'],
-            'status' => ['nullable', 'string', 'max:50'],
-        ]);
-
-        $book->update($data);
+        $book->update($request->validated());
 
         return redirect()->route('books.show', $book)
             ->with('status', '本の情報を更新しました。');
